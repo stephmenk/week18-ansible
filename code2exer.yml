@@ -1,0 +1,24 @@
+---
+- hosts: db
+  become: yes
+  ignore_errors: yes
+  gather_facts: true
+  tasks:
+    - name: Check number of CPU
+      command: uptime
+      register: nproc_output
+
+    - name: Display the output
+      debug:
+        var: nproc_output.stdout
+
+    - name: Create file
+      file:
+        path: /home/ec2-user/example
+        state: touch
+        mode: '0644'
+      register: file_output
+
+    - name: Display output
+      debug:
+        var: file_output.dest

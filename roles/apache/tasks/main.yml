@@ -1,0 +1,23 @@
+---
+# tasks file for apache
+- name: install httpd
+  package:
+    name: "{{ package_name }}"
+    state: present
+
+- name: start httpd daemon
+  systemd:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: copy index file to target
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+  notify: Restart Apache
+
+- name: Restart Apache
+  systemd:
+    name: httpd
+    state: restarted

@@ -1,0 +1,33 @@
+---
+- hosts: db
+  become: true
+  gather_facts: 0
+  ignore_errors: false
+  tasks:
+    - name: update the system
+      yum:
+        name: '*'
+        state: latest
+
+    - name: install httpd
+      package:
+        name: httpd
+        state: present
+
+    - name: start httpd daemon
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
+    - name: copy index file to target
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+      tags:
+        - file_copy
+      notify: Restart Apache
+  handlers:
+    - name: Restart Apache
+       systemd:
+        name: httpd
+           state: restarted   
